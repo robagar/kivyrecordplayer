@@ -1,3 +1,5 @@
+import sys
+
 from kivy.app import App
 from kivy.logger import Logger
 from kivy.uix.stacklayout import StackLayout
@@ -27,7 +29,10 @@ class RecordPlayerApp(App):
         return root
 
     def on_start(self):
-        self.albums = load_albums('/Files/Music.test')
+        Logger.info(sys.version)
+        Logger.info('你好')
+        # print('你好')
+        self.albums = load_albums('/music')
 
         for a in self.albums:
             if a.cover_image_path:
@@ -35,7 +40,7 @@ class RecordPlayerApp(App):
                     a,
                     on_press=self.on_record_press,
                     size_hint=(None, None), 
-                    size=(256, 256), 
+                    size=(150, 150), 
                     source=a.cover_image_path, 
                     allow_stretch=True
                 )

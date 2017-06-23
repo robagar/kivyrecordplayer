@@ -1,4 +1,4 @@
 #!/bin/bash
 
-kivy -m recordplayer
+python -m recordplayer
 
