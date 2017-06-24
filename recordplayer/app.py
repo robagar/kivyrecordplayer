@@ -1,5 +1,3 @@
-import sys
-
 from kivy.app import App
 from kivy.logger import Logger
 from kivy.uix.stacklayout import StackLayout
@@ -9,8 +7,9 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.behaviors import ButtonBehavior
 
+from . import settings
+from .player import create_player
 from .album import load_albums
-from .player import play, is_playing, is_playing_album, pause, resume
 
 
 class RecordWidget(ButtonBehavior, Image):
@@ -29,10 +28,9 @@ class RecordPlayerApp(App):
         return root
 
     def on_start(self):
-        Logger.info(sys.version)
-        Logger.info('你好')
-        # print('你好')
-        self.albums = load_albums('/music')
+        Logger.info('START')
+        self.player = create_player(settings.PLAYER)
+        self.albums = load_albums(settings.MUSIC_PATH)
 
         for a in self.albums:
             if a.cover_image_path:
@@ -48,9 +46,10 @@ class RecordPlayerApp(App):
 
     def on_record_press(self, widget):
         a = widget.album
-        if is_playing():
-            pause()
-        elif is_playing_album(a):
-            resume()
+        p = self.player
+        if p.playing:
+            p.pause()
+        elif p.playing_album(a):
+            p.resume()
         else:    
-            play(a)
+            p.play_album(a)
