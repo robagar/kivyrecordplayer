@@ -2,7 +2,7 @@ from mpd import MPDClient
 from ..player import Player
 
 
-def MPDPlayer(Player):
+class MPDPlayer(Player):
     def __init__(self):
         self._mpd = MPDClient()
         self._mpd.connect('localhost', 6600)
