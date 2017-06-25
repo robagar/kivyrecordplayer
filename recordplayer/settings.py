@@ -1,3 +1,4 @@
+DEBUG = False
 MUSIC_PATH = '/music'
 PLAYER = 'mpd'
 

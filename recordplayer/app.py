@@ -12,6 +12,7 @@ from kivy.uix.popup import Popup
 from . import settings
 from .player import create_player
 from .album import load_albums
+from .shutdown import shutdown, reboot
 
 
 class RecordWidget(ButtonBehavior, Image):
@@ -148,7 +149,15 @@ class RecordPlayerApp(App):
         pass
 
     def on_shutdown_press(self, widget):
-        pass
+        if not settings.DEBUG:
+            Logger.info('RecordPlayer: SHUTDOWN')
+            # shutdown()
+        else:
+            Logger.info('RecordPlayer: SHUTDOWN (not really - DEBUG is true)')
 
     def on_reboot_press(self, widget):
-        pass
+        if not settings.DEBUG:
+            Logger.info('RecordPlayer: REBOOT')
+            # reboot()
+        else:
+            Logger.info('RecordPlayer: REBOOT (not really - DEBUG is true)')
