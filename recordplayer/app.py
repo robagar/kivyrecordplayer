@@ -151,13 +151,13 @@ class RecordPlayerApp(App):
     def on_shutdown_press(self, widget):
         if not settings.DEBUG:
             Logger.info('RecordPlayer: SHUTDOWN')
-            # shutdown()
+            shutdown()
         else:
             Logger.info('RecordPlayer: SHUTDOWN (not really - DEBUG is true)')
 
     def on_reboot_press(self, widget):
         if not settings.DEBUG:
             Logger.info('RecordPlayer: REBOOT')
-            # reboot()
+            reboot()
         else:
             Logger.info('RecordPlayer: REBOOT (not really - DEBUG is true)')
