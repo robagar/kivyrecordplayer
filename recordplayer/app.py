@@ -31,11 +31,11 @@ class RecordPlayerApp(App):
 
     def init_albums_view(self):
         ac = self.album_container = StackLayout(
-            padding=10,
-            spacing=10#, 
-            # size_hint_y=None
+            padding=5,
+            spacing=5, 
+            size_hint_y=None
         )
-        # ac.bind(minimum_height=ac.setter('height'))
+        ac.bind(minimum_height=ac.setter('height'))
         v = ScrollView()
         v.add_widget(ac)
         return v
@@ -123,7 +123,7 @@ class RecordPlayerApp(App):
                     a,
                     on_press=self.on_record_press,
                     size_hint=(None, None), 
-                    size=(150, 150), 
+                    size=(154, 154), 
                     source=a.cover_image_path, 
                     allow_stretch=True
                 )

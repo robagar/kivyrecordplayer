@@ -1,4 +1,5 @@
 import os
+import random
 from kivy.logger import Logger
 
 
@@ -13,6 +14,10 @@ def load_albums(root_dir_path):
         if is_valid_album_dir(p):
             Logger.info(d)
             albums.append(Album(p))
+
+    random.seed(1)
+    random.shuffle(albums)
+
     return albums
 
 def is_valid_album_dir(dir_path):
