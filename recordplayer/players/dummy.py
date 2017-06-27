@@ -2,5 +2,5 @@ from ..player import Player
 
 
 class DummyPlayer(Player):
-    def start_playing_album(self, album):
+    def on_play_album(self):
         pass 

@@ -7,9 +7,9 @@ class MPDPlayer(Player):
         self._mpd = MPDClient()
         self._mpd.connect('localhost', 6600)
 
-    def start_playing_album(self, album):
+    def on_play_album(self):
         self._mpd.clear()
-        self._mpd.add(album.name)
+        self._mpd.add(self.playing_album.name)
         self._mpd.play()
 
     def on_pause(self):
@@ -17,3 +17,27 @@ class MPDPlayer(Player):
 
     def on_resume(self):
         self._mpd.pause(0)
+
+    def on_play_next_track(self):
+        m = self._mpd
+        m.repeat(1)
+        m.next()
+        m.repeat(0)
+
+    def on_play_previous_track(self):
+        m = self._mpd
+        m.repeat(1)
+        m.previous()
+        m.repeat(0)
+
+    def on_stop(self):
+        m = self._mpd
+        m.pause()
+        m.clear()
+
+    @property
+    def playing_track_name(self):
+        return self._mpd.currentsong()
+
+
+

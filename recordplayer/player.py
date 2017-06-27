@@ -9,20 +9,25 @@ class Player:
         return self._playing
 
     _playing_album = None
-    def playing_album(self, album):
-        return self._playing_album is album
+    @property
+    def playing_album(self):
+        return self._playing_album
+
+    @property
+    def playing_track_name(self):
+        return '(unknown)'
 
     def play_album(self, album):
         Logger.info('PLAY ' + album.name)
         self._playing_album = album
         self._playing = True
-        self.start_playing_album(album)
+        self.on_play_album()
 
-    def start_playing_album(self, album):
+    def on_play_album(self):
         raise NotImplementedError()
 
     def pause(self):
-        Logger.info('PAUSE')
+        Logger.info('Player: PAUSE')
         self.on_pause()
         self._playing = False
 
@@ -30,13 +35,40 @@ class Player:
         pass
 
     def resume(self):
-        Logger.info('RESUME')
+        Logger.info('Player: RESUME')
         self.on_resume()
         self._playing = True
 
     def on_resume(self):
         pass
 
+    def play_next_track(self):
+        Logger.info('Player: NEXT')
+        self.on_play_next_track()
+        self._playing = True
+
+    def on_play_next_track(self):
+        pass
+
+    def play_previous_track(self):
+        Logger.info('Player: PREV')
+        self.on_play_previous_track()
+        self._playing = True
+
+    def on_play_previous_track(self):
+        pass
+
+    def stop(self):
+        Logger.info('Player: STOP')
+        self.on_stop()
+        self._playing = False
+        self._playing_album = None
+
+    def on_stop(self):
+        pass
+
+    def update(self):
+        pass
 
 def create_player(player_name):
     Logger.info('player: ' + player_name)

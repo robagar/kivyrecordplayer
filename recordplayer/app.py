@@ -1,5 +1,6 @@
 from kivy.app import App
 from kivy.logger import Logger
+from kivy.clock import Clock
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.boxlayout import BoxLayout
@@ -19,32 +20,66 @@ class RecordWidget(ButtonBehavior, Image):
     def __init__(self, album, *args, **kwargs):
         super(RecordWidget, self).__init__(*args, **kwargs)
         self.album = album
+        self.album.widget = self
+        self.on_unselected()
+
+    def on_selected(self):
+        self.color = [1, 1, 1, 1]
+
+    def on_unselected(self):
+        self.color = [1, 1, 1, 0.5]        
 
 
 class RecordPlayerApp(App):
 
     def build(self):
         root = BoxLayout(orientation='vertical')
+        root.add_widget(self.init_header_bar());
         root.add_widget(self.init_albums_view());
-        root.add_widget(self.init_toolbar());
+        root.add_widget(self.init_play_bar());
         return root
 
-    def init_albums_view(self):
-        ac = self.album_container = StackLayout(
-            padding=5,
-            spacing=5, 
-            size_hint_y=None
+    def init_header_bar(self):
+        hb = self.header_bar = BoxLayout(
+            size_hint_y=None,
+            height=50,
+            spacing=5,
+            orientation='horizontal'
         )
-        ac.bind(minimum_height=ac.setter('height'))
-        v = ScrollView()
+
+        # currently playing
+        self.album_label = Label(
+            text="(please select an album to play...)"
+        )
+        hb.add_widget(self.album_label)
+
+        # system popup
+        self.init_system_popup()
+        hb.add_widget(Button(
+            text='system',
+            size_hint_x=None,
+            width=100,
+            on_press=self.system_popup.open
+        ))
+        return hb
+
+
+    def init_albums_view(self):
+        ac = self.album_container = BoxLayout(
+            orientation='horizontal',
+            padding=15,
+            spacing=30, 
+            size_hint_x=None
+        )
+        ac.bind(minimum_width=ac.setter('width'))
+        v = self.album_view = ScrollView()
         v.add_widget(ac)
         return v
 
-    def init_toolbar(self):
-        tb = self.toolbar = BoxLayout(
+    def init_play_bar(self):
+        pb = self.play_bar = BoxLayout(
             size_hint_y=None,
             height=50,
-            padding=5,
             spacing=5,
             orientation='horizontal'
         )
@@ -56,16 +91,22 @@ class RecordPlayerApp(App):
             width=100,
             on_press=self.on_prev_button_press
         )
-        tb.add_widget(self.prev_button)
+        pb.add_widget(self.prev_button)
 
         # pause / resume
-        self.pause_button = Button(
-            text="pause",
+        self.play_pause_button = Button(
+            text="play",
             size_hint_x=None,
             width=100,
-            on_press=self.on_pause_button_press
+            on_press=self.on_play_pause_button_press
         )
-        tb.add_widget(self.pause_button)
+        pb.add_widget(self.play_pause_button)
+
+        # currently playing
+        self.playing_label = Label(
+            text="(not playing)"
+        )
+        pb.add_widget(self.playing_label)
         
         # next track
         self.next_button = Button(
@@ -74,23 +115,9 @@ class RecordPlayerApp(App):
             width=100,
             on_press=self.on_next_button_press
         )
-        tb.add_widget(self.next_button)
-        
-        # currently playing
-        self.playing_label = Label(
-            text="(not playing)"
-        )
-        tb.add_widget(self.playing_label)
+        pb.add_widget(self.next_button)
 
-        # system popup
-        self.init_system_popup()
-        tb.add_widget(Button(
-            text='system',
-            size_hint_x=None,
-            width=100,
-            on_press=self.system_popup.open
-        ))
-        return tb
+        return pb
 
     def init_system_popup(self):
         c = BoxLayout(
@@ -123,30 +150,51 @@ class RecordPlayerApp(App):
                     a,
                     on_press=self.on_record_press,
                     size_hint=(None, None), 
-                    size=(154, 154), 
+                    size=(350, 350), 
                     source=a.cover_image_path, 
                     allow_stretch=True
                 )
                 self.album_container.add_widget(w)
 
+        Clock.schedule_interval(lambda dt: self.update_player_status, 1)
+
+    selected_album = None
+
     def on_record_press(self, widget):
-        a = widget.album
+        album = widget.album
+        if not album is self.selected_album:
+            if self.selected_album:
+                self.selected_album.widget.on_unselected()
+            self.selected_album = album
+            album.widget.on_selected()
+            self.album_view.scroll_to(album.widget, padding=225)
+            self.album_label.text = album.name
+            self.playing_label.text = ''
+
         p = self.player
-        if p.playing:
-            p.pause()
-        elif p.playing_album(a):
-            p.resume()
-        else:    
-            p.play_album(a)
+        if p.playing_album and not p.playing_album is album:
+            p.stop()
 
     def on_prev_button_press(self, widget):
-        pass
+        p = self.player
+        if p.playing_album:
+            p.play_next_track()
 
     def on_next_button_press(self, widget):
-        pass
+        p = self.player
+        if p.playing_album:
+            p.play_previous_track()
 
-    def on_pause_button_press(self, widget):
-        pass
+    def on_play_pause_button_press(self, widget):
+        album = self.selected_album
+        if album:
+            p = self.player
+            if not p.playing_album is album:
+                p.play_album(album)
+            elif p.playing:
+                p.pause()
+            else:
+                p.resume() 
 
     def on_shutdown_press(self, widget):
         if not settings.DEBUG:
@@ -161,3 +209,10 @@ class RecordPlayerApp(App):
             reboot()
         else:
             Logger.info('RecordPlayer: REBOOT (not really - DEBUG is true)')
+
+    def update_player_status(self):
+        p = self.player
+        p.update()
+        self.playing_label.text = p.playing_track_name
+
+
