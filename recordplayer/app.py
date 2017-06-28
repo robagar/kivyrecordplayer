@@ -47,12 +47,6 @@ class RecordPlayerApp(App):
             orientation='horizontal'
         )
 
-        # currently playing
-        self.album_label = Label(
-            text="(please select an album to play...)"
-        )
-        hb.add_widget(self.album_label)
-
         # system popup
         self.init_system_popup()
         hb.add_widget(Button(
@@ -61,6 +55,22 @@ class RecordPlayerApp(App):
             width=100,
             on_press=self.system_popup.open
         ))
+ 
+        # currently playing
+        self.album_label = Label(
+            text="(please select an album to play...)"
+        )
+        hb.add_widget(self.album_label)
+
+        # pause / resume
+        self.play_pause_button = Button(
+            text="play",
+            size_hint_x=None,
+            width=100,
+            on_press=self.on_play_pause_button_press
+        )
+        hb.add_widget(self.play_pause_button)
+
         return hb
 
 
@@ -71,7 +81,10 @@ class RecordPlayerApp(App):
             spacing=30, 
             size_hint_x=None
         )
-        ac.bind(minimum_width=ac.setter('width'))
+
+        # TODO uncomment when kivy 1.10 is available
+        # ac.bind(minimum_width=ac.setter('width'))
+ 
         v = self.album_view = ScrollView()
         v.add_widget(ac)
         return v
@@ -92,15 +105,6 @@ class RecordPlayerApp(App):
             on_press=self.on_prev_button_press
         )
         pb.add_widget(self.prev_button)
-
-        # pause / resume
-        self.play_pause_button = Button(
-            text="play",
-            size_hint_x=None,
-            width=100,
-            on_press=self.on_play_pause_button_press
-        )
-        pb.add_widget(self.play_pause_button)
 
         # currently playing
         self.playing_label = Label(
@@ -144,6 +148,8 @@ class RecordPlayerApp(App):
         self.player = create_player(settings.PLAYER)
         self.albums = load_albums(settings.MUSIC_PATH)
 
+        ac = self.album_container
+        n = 0
         for a in self.albums:
             if a.cover_image_path:
                 w = RecordWidget(
@@ -154,9 +160,11 @@ class RecordPlayerApp(App):
                     source=a.cover_image_path, 
                     allow_stretch=True
                 )
-                self.album_container.add_widget(w)
+                ac.add_widget(w)
+                n += 1
+        ac.width = 30 + n * 380 # hack pending minimum_width in kivy 1.10
 
-        Clock.schedule_interval(lambda dt: self.update_player_status, 1)
+        Clock.schedule_interval(lambda dt: self.update_player_status(), 1)
 
     selected_album = None
 
@@ -178,12 +186,14 @@ class RecordPlayerApp(App):
     def on_prev_button_press(self, widget):
         p = self.player
         if p.playing_album:
-            p.play_next_track()
+            p.play_previous_track()
 
     def on_next_button_press(self, widget):
         p = self.player
         if p.playing_album:
-            p.play_previous_track()
+            p.play_next_track()
+        elif self.selected_album:
+            p.play_album(self.selected_album)
 
     def on_play_pause_button_press(self, widget):
         album = self.selected_album
@@ -213,6 +223,7 @@ class RecordPlayerApp(App):
     def update_player_status(self):
         p = self.player
         p.update()
-        self.playing_label.text = p.playing_track_name
+        tn = p.playing_track_name
+        self.playing_label.text = tn if tn else ''
 
 

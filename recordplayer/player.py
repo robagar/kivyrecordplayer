@@ -13,9 +13,10 @@ class Player:
     def playing_album(self):
         return self._playing_album
 
+    _playing_track_name = None
     @property
     def playing_track_name(self):
-        return '(unknown)'
+        return self._playing_track_name
 
     def play_album(self, album):
         Logger.info('PLAY ' + album.name)

@@ -12,7 +12,7 @@ def load_albums(root_dir_path):
 
         p = os.path.join(root_dir_path, d)
         if is_valid_album_dir(p):
-            Logger.info(d)
+            # Logger.info(d)
             albums.append(Album(p))
 
     random.seed(1)
@@ -37,7 +37,7 @@ class Album(object):
         self._dir_path = dir_path
 
         self._scan_files()
-        Logger.info(str(self._cover_image_file))
+        # Logger.info(str(self._cover_image_file))
 
     @property
     def name(self):

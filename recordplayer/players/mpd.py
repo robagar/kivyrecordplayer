@@ -35,9 +35,10 @@ class MPDPlayer(Player):
         m.pause()
         m.clear()
 
-    @property
-    def playing_track_name(self):
-        return self._mpd.currentsong()
+    def update(self):
+        t = self._mpd.currentsong()
+        self._playing_track_name = t.get('title') if t else None
+
 
 
 
