@@ -1,54 +1,41 @@
 from kivy.app import App
 from kivy.logger import Logger
 from kivy.clock import Clock
-# from kivy.uix.stacklayout import StackLayout
-# from kivy.uix.scrollview import ScrollView
-# from kivy.uix.boxlayout import BoxLayout
-# from kivy.uix.button import Button
-# from kivy.uix.image import Image
-# from kivy.uix.label import Label
-# from kivy.uix.behaviors import ButtonBehavior
-# from kivy.uix.popup import Popup
+from kivy.uix.widget import Widget
 
 from . import settings
 from .player import create_player
 from .album import load_albums
 from .shutdown import shutdown, reboot
+from .ui.albums import create_browsing_ui
 from .ui.playing import create_playing_ui
 
 
-
-
 class RecordPlayerApp(App):
-
-    # def init_albums_view(self):
-    #     ac = self.album_container = BoxLayout(
-    #         orientation='horizontal',
-    #         padding=15,
-    #         spacing=30, 
-    #         size_hint_x=None
-    #     )
-
-    #     # TODO uncomment when kivy 1.10 is available
-    #     # ac.bind(minimum_width=ac.setter('width'))
- 
-    #     v = self.album_view = ScrollView()
-    #     v.add_widget(ac)
-    #     return v
-
-
          
     def build(self):
+
+
         ui = create_playing_ui(self)
         self.album_carousel = ui.album_carousel
         self.album_label = ui.header_bar.album_label
         self.playing_label = ui.play_bar.playing_label 
-        return ui
+
+        self.browsing_ui = create_browsing_ui(self)
+        self.album_browser = self.browsing_ui.album_browser 
+
+        # root = Widget()
+        # root.add_widget(self.browsing_ui)
+
+        return self.browsing_ui
 
     def on_start(self):
         Logger.info('START')
         self.player = create_player(settings.PLAYER)
-        self.album_carousel.albums = self.albums = load_albums(settings.MUSIC_PATH)
+        self.albums \
+            = self.album_carousel.albums \
+            = self.album_browser.albums \
+            = load_albums(settings.MUSIC_PATH)
         Clock.schedule_interval(lambda dt: self.update_player_status(), 1)
 
     selected_album = None
