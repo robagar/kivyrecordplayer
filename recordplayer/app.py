@@ -182,6 +182,7 @@ class RecordPlayerApp(App):
         p = self.player
         if p.playing_album and not p.playing_album is album:
             p.stop()
+            self.on_stop_playing()
 
     def on_prev_button_press(self, widget):
         p = self.player
@@ -194,6 +195,7 @@ class RecordPlayerApp(App):
             p.play_next_track()
         elif self.selected_album:
             p.play_album(self.selected_album)
+            self.on_playing()
 
     def on_play_pause_button_press(self, widget):
         album = self.selected_album
@@ -201,10 +203,19 @@ class RecordPlayerApp(App):
             p = self.player
             if not p.playing_album is album:
                 p.play_album(album)
+                self.on_playing()
             elif p.playing:
                 p.pause()
+                self.on_stop_playing()
             else:
                 p.resume() 
+                self.on_playing()
+
+    def on_playing(self):
+        self.play_pause_button.text = 'pause'
+
+    def on_stop_playing(self):
+        self.play_pause_button.text = 'play'
 
     def on_shutdown_press(self, widget):
         if not settings.DEBUG:
