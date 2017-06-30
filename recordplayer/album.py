@@ -35,6 +35,7 @@ class Album(object):
 
     def __init__(self, dir_path):
         self._dir_path = dir_path
+        self._widgets = set()
 
         self._scan_files()
         # Logger.info(str(self._cover_image_file))
@@ -42,6 +43,20 @@ class Album(object):
     @property
     def name(self):
         return os.path.basename(self._dir_path)
+
+    @property
+    def widgets(self):
+        return self._widgets
+
+    _carousel_widget = None
+    @property
+    def carousel_widget(self):
+        return self._carousel_widget
+
+    @carousel_widget.setter
+    def carousel_widget(self, widget):
+        self._carousel_widget = widget
+        self._widgets.add(widget)
 
     @property
     def cover_image_path(self):
@@ -80,5 +95,11 @@ class Album(object):
 
         self._track_files.sort()
 
-# class AlbumLayout
+    def on_selected(self):
+        for w in self.widgets:
+            w.on_selected()
+
+    def on_unselected(self):
+        for w in self.widgets:
+            w.on_unselected()
 
