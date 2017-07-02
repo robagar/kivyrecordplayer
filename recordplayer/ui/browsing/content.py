@@ -18,10 +18,10 @@ class AlbumIcon(ButtonBehavior, Image):
         self.on_unselected()
 
     def on_selected(self):
-        pass
+        self.color = [1, 1, 1, 1]
 
     def on_unselected(self):
-        pass       
+        self.color = [1, 1, 1, 0.8]       
 
 
 class AlbumBrowser(ScrollView):
@@ -56,17 +56,16 @@ class AlbumBrowser(ScrollView):
     def add_album(self, album):
         w = AlbumIcon(
             album,
-            on_press=self.on_album_press
+            on_press=self.on_album_press,
+            on_release=self.on_album_release
         )
         ac = self.album_container
         ac.add_widget(w)
 
-    # def show_album(self, album):
-    #     self.scroll_to(album.icon_widget)
-
     def on_album_press(self, widget):
         album = widget.album
-        # self.show_album(album)
-        # self._listener.on_album_press(album)
+        self._listener.selected_album = album
 
-
+    def on_album_release(self, widget):
+        album = widget.album
+        self._listener.play_album(album)

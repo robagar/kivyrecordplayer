@@ -1,13 +1,14 @@
 from kivy.app import App
 from kivy.logger import Logger
 from kivy.clock import Clock
-from kivy.uix.widget import Widget
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
 
 from . import settings
 from .player import create_player
 from .album import load_albums
 from .shutdown import shutdown, reboot
-from .ui.albums import create_browsing_ui
+from .ui.browsing import create_browsing_ui
 from .ui.playing import create_playing_ui
 
 
@@ -16,18 +17,20 @@ class RecordPlayerApp(App):
     def build(self):
 
 
-        ui = create_playing_ui(self)
+        ui = self.playing_ui = create_playing_ui(self)
         self.album_carousel = ui.album_carousel
         self.album_label = ui.header_bar.album_label
         self.playing_label = ui.play_bar.playing_label 
 
-        self.browsing_ui = create_browsing_ui(self)
-        self.album_browser = self.browsing_ui.album_browser 
+        ui = self.browsing_ui = create_browsing_ui(self)
+        self.album_browser = ui.album_browser 
 
-        # root = Widget()
-        # root.add_widget(self.browsing_ui)
+        root = BoxLayout()
+        root.add_widget(Label(
+            text='loading...'
+        ))
 
-        return self.browsing_ui
+        return root
 
     def on_start(self):
         Logger.info('START')
@@ -37,21 +40,59 @@ class RecordPlayerApp(App):
             = self.album_browser.albums \
             = load_albums(settings.MUSIC_PATH)
         Clock.schedule_interval(lambda dt: self.update_player_status(), 1)
+        self.show_browsing_ui()
 
-    selected_album = None
+    _selected_album = None
+    @property
+    def selected_album(self):
+        return self._selected_album
 
-    def on_album_press(self, album):
-        if not album is self.selected_album:
-            if self.selected_album:
-                self.selected_album.on_unselected()
-            self.selected_album = album
+    @selected_album.setter
+    def selected_album(self, album):
+        if not album is self._selected_album:
+            Logger.info('SELECT ' + album.name)
+            if self._selected_album:
+                self._selected_album.on_unselected()
+            self._selected_album = album
             album.on_selected()
             self.album_label.text = album.name
             self.playing_label.text = ''
 
+    def on_show_playing_ui_button_press(self,  widget):
+        self.show_playing_ui()
+
+    def on_show_browsing_ui_button_press(self,  widget):
+        self.show_browsing_ui()
+
+    def show_playing_ui(self, album=None):
+        self.show_ui(self.playing_ui)
+        if album:
+           self.selected_album = album 
+        if self.selected_album:
+            self.album_carousel.show_album(self.selected_album)
+
+    def show_browsing_ui(self):
+        self.show_ui(self.browsing_ui)
+
+    def show_ui(self, ui):
+        r = self.root
+        r.clear_widgets()
+        r.add_widget(ui)
+
+    def on_album_press(self, album):
         p = self.player
-        if p.playing_album and not p.playing_album is album:
-            p.stop()
+        if self.selected_album is album:
+            if not p.playing_album is album:
+                p.play_album(album)
+        else:           
+            self.selected_album = album
+            if p.playing_album and not p.playing_album is album:
+                p.stop()
+
+    def play_album(self, album):
+        self.selected_album = album
+        self.show_playing_ui()
+        self.player.play_album(album)
 
     def on_prev_button_press(self, widget):
         album = self.selected_album
