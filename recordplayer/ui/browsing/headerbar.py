@@ -1,6 +1,6 @@
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
 from kivy.uix.label import Label
+from ..barbutton import BarButton
 
 
 class HeaderBar(BoxLayout):
@@ -14,10 +14,8 @@ class HeaderBar(BoxLayout):
         )        
 
         # system popup
-        self.add_widget(Button(
-            text='system',
-            size_hint_x=None,
-            width=100,
+        self.add_widget(BarButton(
+            icon_name='cogs',
             on_press=listener.on_system_button_press
         ))
  
@@ -28,10 +26,8 @@ class HeaderBar(BoxLayout):
         self.add_widget(self.album_label)
 
         # show playing UI
-        self.show_playing_ui_button = Button(
-            text="play",
-            size_hint_x=None,
-            width=100,
+        self.show_playing_ui_button = BarButton(
+            icon_name="play",
             on_press=listener.on_show_playing_ui_button_press
         )
         self.add_widget(self.show_playing_ui_button)

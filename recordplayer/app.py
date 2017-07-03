@@ -21,6 +21,7 @@ class RecordPlayerApp(App):
         ui = self.playing_ui = create_playing_ui(self)
         self.album_carousel = ui.album_carousel
         self.album_label = ui.header_bar.album_label
+        self.play_pause_button = ui.header_bar.play_pause_button
         self.playing_label = ui.play_bar.playing_label 
 
         ui = self.browsing_ui = create_browsing_ui(self)
@@ -84,6 +85,7 @@ class RecordPlayerApp(App):
         else:
             self.show_playing_ui()
             self.player.play_album(album)
+        self.update_play_pause()
 
     def show_ui(self, ui):
         r = self.root
@@ -103,6 +105,7 @@ class RecordPlayerApp(App):
             self.selected_album = album
             if p.playing_album and not p.playing_album is album:
                 p.stop()
+        self.update_play_pause()
 
     def on_prev_button_press(self, widget):
         album = self.selected_album
@@ -121,6 +124,7 @@ class RecordPlayerApp(App):
                 p.play_next_track()
             else:
                 p.play_album(album)
+        self.update_play_pause()
 
     def on_play_pause_button_press(self, widget):
         album = self.selected_album
@@ -133,6 +137,7 @@ class RecordPlayerApp(App):
                 p.pause()
             else:
                 p.resume() 
+        self.update_play_pause()
 
     def on_shutdown_press(self, widget):
         if not settings.DEBUG:
@@ -160,3 +165,6 @@ class RecordPlayerApp(App):
             self._system_popup = create_system_popup(self)
         self._system_popup.open()
 
+    def update_play_pause(self):
+        b = self.play_pause_button
+        b.set_icon('pause' if self.player.playing else 'play')
