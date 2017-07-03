@@ -15,7 +15,7 @@ class HeaderBar(BoxLayout):
 
         # show browsing UI
         self.add_widget(BarButton(
-            icon_name='music',
+            icon_name='chevron-left',
             on_press=listener.on_show_browsing_ui_button_press
         ))
  

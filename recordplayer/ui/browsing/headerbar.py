@@ -27,7 +27,7 @@ class HeaderBar(BoxLayout):
 
         # show playing UI
         self.show_playing_ui_button = BarButton(
-            icon_name="play",
+            icon_name="chevron-right",
             on_press=listener.on_show_playing_ui_button_press
         )
         self.add_widget(self.show_playing_ui_button)
