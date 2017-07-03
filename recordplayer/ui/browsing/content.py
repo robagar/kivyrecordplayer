@@ -3,13 +3,17 @@ from kivy.uix.stacklayout import StackLayout
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
 
+# 93, 7
+# 110, 5
+# 130, 4
+# 156, 5
 
 class AlbumIcon(ButtonBehavior, Image):
     def __init__(self, album, **kwargs):
         super().__init__(
             source=album.cover_image_path,
             size_hint=(None, None), 
-            size=(95, 95), 
+            size=(156, 156), 
             allow_stretch=True,
             **kwargs
         )
@@ -18,10 +22,16 @@ class AlbumIcon(ButtonBehavior, Image):
         self.on_unselected()
 
     def on_selected(self):
-        self.color = [1, 1, 1, 1]
+        pass
 
     def on_unselected(self):
-        self.color = [1, 1, 1, 0.8]       
+        pass
+
+    def dim(self):
+        self.color = [1, 1, 1, 0.5]       
+
+    def brighten(self):
+        self.color = [1, 1, 1, 1]       
 
 
 class AlbumBrowser(ScrollView):
@@ -56,16 +66,28 @@ class AlbumBrowser(ScrollView):
     def add_album(self, album):
         w = AlbumIcon(
             album,
-            on_press=self.on_album_press,
-            on_release=self.on_album_release
+            on_press=self.on_album_press
         )
         ac = self.album_container
         ac.add_widget(w)
 
     def on_album_press(self, widget):
         album = widget.album
-        self._listener.selected_album = album
+        for a in self.albums:
+            if a is album:
+                a.icon_widget.brighten()
+            else:
+                a.icon_widget.dim()
+        self.show_album(album)
+        self.album_label.text = album.name
+        self._listener.on_browse_album_press(album)
 
-    def on_album_release(self, widget):
-        album = widget.album
-        self._listener.play_album(album)
+    def show_album(self, album):
+        self.scroll_to(album.icon_widget, padding=25)
+
+    def reset(self):
+        self.album_label.text = ''
+        for album in self.albums:
+            album.icon_widget.brighten()
+        
+

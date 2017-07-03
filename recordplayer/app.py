@@ -10,6 +10,7 @@ from .album import load_albums
 from .shutdown import shutdown, reboot
 from .ui.browsing import create_browsing_ui
 from .ui.playing import create_playing_ui
+from .ui.system import create_system_popup
 
 
 class RecordPlayerApp(App):
@@ -23,8 +24,8 @@ class RecordPlayerApp(App):
         self.playing_label = ui.play_bar.playing_label 
 
         ui = self.browsing_ui = create_browsing_ui(self)
-        self.album_browser = ui.album_browser 
-
+        self.album_browser = ui.album_browser
+ 
         root = BoxLayout()
         root.add_widget(Label(
             text='loading...'
@@ -73,6 +74,16 @@ class RecordPlayerApp(App):
 
     def show_browsing_ui(self):
         self.show_ui(self.browsing_ui)
+        self.album_browser.reset()
+        if self.selected_album:
+            self.album_browser.show_album(self.selected_album)
+
+    def on_browse_album_press(self, album):
+        if not self.selected_album is album:
+            self.selected_album = album
+        else:
+            self.show_playing_ui()
+            self.player.play_album(album)
 
     def show_ui(self, ui):
         r = self.root
@@ -84,15 +95,14 @@ class RecordPlayerApp(App):
         if self.selected_album is album:
             if not p.playing_album is album:
                 p.play_album(album)
+            elif p.playing:
+                p.pause()
+            else:
+                p.resume()
         else:           
             self.selected_album = album
             if p.playing_album and not p.playing_album is album:
                 p.stop()
-
-    def play_album(self, album):
-        self.selected_album = album
-        self.show_playing_ui()
-        self.player.play_album(album)
 
     def on_prev_button_press(self, widget):
         album = self.selected_album
@@ -144,4 +154,9 @@ class RecordPlayerApp(App):
         tn = p.playing_track_name
         self.playing_label.text = tn if tn else ''
 
+    _system_popup = None
+    def on_system_button_press(self, widget):
+        if not self._system_popup:
+            self._system_popup = create_system_popup(self)
+        self._system_popup.open()
 

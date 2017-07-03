@@ -58,6 +58,16 @@ class Album(object):
         self._carousel_widget = widget
         self._widgets.add(widget)
 
+    _icon_widget = None
+    @property
+    def icon_widget(self):
+        return self._icon_widget
+
+    @icon_widget.setter
+    def icon_widget(self, widget):
+        self._icon_widget = widget
+        self._widgets.add(widget)
+
     @property
     def cover_image_path(self):
         if self._cover_image_file:

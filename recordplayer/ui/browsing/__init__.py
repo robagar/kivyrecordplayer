@@ -7,5 +7,6 @@ def create_browsing_ui(listener):
     ui.header_bar = HeaderBar(listener)
     ui.add_widget(ui.header_bar);
     ui.album_browser = AlbumBrowser(listener)
+    ui.album_browser.album_label = ui.header_bar.album_label
     ui.add_widget(ui.album_browser);
     return ui

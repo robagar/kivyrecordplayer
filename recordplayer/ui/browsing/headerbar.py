@@ -2,8 +2,6 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 
-from ..system import create_system_popup
-
 
 class HeaderBar(BoxLayout):
     def __init__(self, listener):
@@ -20,14 +18,14 @@ class HeaderBar(BoxLayout):
             text='system',
             size_hint_x=None,
             width=100,
-            on_press=create_system_popup(listener).open
+            on_press=listener.on_system_button_press
         ))
  
         # currently playing
-        self.title_label = Label(
+        self.album_label = Label(
             text=""
         )
-        self.add_widget(self.title_label)
+        self.add_widget(self.album_label)
 
         # show playing UI
         self.show_playing_ui_button = Button(
