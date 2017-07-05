@@ -39,6 +39,9 @@ class MPDPlayer(Player):
         t = self._mpd.currentsong()
         self._playing_track_name = t.get('title') if t else None
 
+    def rescan(self):
+        self._mpd.update()
+
 
 
 

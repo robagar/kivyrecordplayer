@@ -37,12 +37,15 @@ class RecordPlayerApp(App):
     def on_start(self):
         Logger.info('START')
         self.player = create_player(settings.PLAYER)
+        self.init_albums()
+        Clock.schedule_interval(lambda dt: self.update_player_status(), 1)
+        self.show_browsing_ui()
+
+    def init_albums(self):
         self.albums \
             = self.album_carousel.albums \
             = self.album_browser.albums \
             = load_albums(settings.MUSIC_PATH)
-        Clock.schedule_interval(lambda dt: self.update_player_status(), 1)
-        self.show_browsing_ui()
 
     _selected_album = None
     @property
@@ -52,12 +55,15 @@ class RecordPlayerApp(App):
     @selected_album.setter
     def selected_album(self, album):
         if not album is self._selected_album:
-            Logger.info('SELECT ' + album.name)
+            Logger.info('SELECT ' + album.name if album else '(none)')
             if self._selected_album:
                 self._selected_album.on_unselected()
             self._selected_album = album
-            album.on_selected()
-            self.album_label.text = album.name
+            if album:
+                album.on_selected()
+                self.album_label.text = album.name
+            else:
+                self.album_label.text = ''
             self.playing_label.text = ''
 
     def on_show_playing_ui_button_press(self,  widget):
@@ -138,6 +144,15 @@ class RecordPlayerApp(App):
             else:
                 p.resume() 
         self.update_play_pause()
+
+    def on_rescan_press(self, widget):
+        Logger.info('RESCAN')
+        self._system_popup.dismiss()
+        p = self.player
+        p.stop()
+        p.rescan()
+        self.selected_album = None
+        self.init_albums()
 
     def on_shutdown_press(self, widget):
         if not settings.DEBUG:

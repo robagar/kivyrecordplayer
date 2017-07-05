@@ -71,6 +71,9 @@ class Player:
     def update(self):
         pass
 
+    def rescan(self):
+        pass
+
 def create_player(player_name):
     Logger.info('player: ' + player_name)
     if player_name == 'mpd':
