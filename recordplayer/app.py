@@ -5,6 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 
 from . import settings
+from .device import create_device
 from .player import create_player
 from .album import load_albums
 from .shutdown import shutdown, reboot
@@ -16,8 +17,6 @@ from .ui.system import create_system_popup
 class RecordPlayerApp(App):
          
     def build(self):
-
-
         ui = self.playing_ui = create_playing_ui(self)
         self.album_carousel = ui.album_carousel
         self.album_label = ui.header_bar.album_label
@@ -36,10 +35,12 @@ class RecordPlayerApp(App):
 
     def on_start(self):
         Logger.info('START')
+        self.device = create_device(settings.DEVICE)
         self.player = create_player(settings.PLAYER)
         self.init_albums()
         Clock.schedule_interval(lambda dt: self.update_player_status(), 1)
         self.show_browsing_ui()
+        self.root_window.bind(on_touch_down=self.on_window_touch_down)
 
     def init_albums(self):
         self.albums \
@@ -183,3 +184,7 @@ class RecordPlayerApp(App):
     def update_play_pause(self):
         b = self.play_pause_button
         b.set_icon('pause' if self.player.playing else 'play')
+
+    def on_window_touch_down(self, *args, **kwargs):
+        # Logger.info('window touch')
+        self.device.touch()

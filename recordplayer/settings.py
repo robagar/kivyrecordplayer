@@ -1,6 +1,8 @@
 DEBUG = False
 MUSIC_PATH = '/music'
 PLAYER = 'mpd'
+DEVICE = 'raspberrypi'
+SCREEN_DIM_TIME = 10
 
 try:
     from .settings_local import *
