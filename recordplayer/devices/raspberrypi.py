@@ -4,4 +4,4 @@ from ..device import Device
 
 class RaspberryPiDevice(Device):
     def set_screen_brightness(self, brightness):
-        set_brightness(round(brightness * 255))    
+        set_brightness(round(brightness * 255), smooth=True, duration=3)    

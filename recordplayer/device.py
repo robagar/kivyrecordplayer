@@ -18,7 +18,7 @@ class Device:
 
     def dim_screen(self):
         Logger.info('DIM SCREEN')
-        self.set_screen_brightness(0.25)
+        self.set_screen_brightness(0.1)
         self._screen_dimmed = True
 
     def brighten_screen(self):
