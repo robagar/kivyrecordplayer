@@ -1,32 +1,45 @@
 from kivy.logger import Logger
 from kivy.clock import Clock
-from .settings import SCREEN_DIM_TIME
+from . import settings
 
 
 class Device:
     def __init__(self):
-        self._schedule_dim_screen = Clock.schedule_once(lambda dt: self.dim_screen(), SCREEN_DIM_TIME)
+        self._schedule_dim_screen = Clock.schedule_once(lambda dt: self.dim_screen(), settings.SCREEN_DIM_TIME)
+        self._schedule_off_screen = Clock.schedule_once(lambda dt: self.screen_off(), settings.SCREEN_OFF_TIME)
 
-    _screen_dimmed = False
+    _screen_bright = False
 
     def touch(self):
         self._schedule_dim_screen.cancel()
         self._schedule_dim_screen()
 
-        if self._screen_dimmed:
+        self._schedule_off_screen.cancel()
+        self._schedule_off_screen()
+
+        if not self._screen_bright:
             self.brighten_screen()
 
     def dim_screen(self):
         Logger.info('DIM SCREEN')
-        self.set_screen_brightness(0.1)
-        self._screen_dimmed = True
+        self.set_screen_brightness(0.1, duration=3)
+        self._screen_bright = False
+
+    def screen_off(self):
+        Logger.info('SCREEN OFF')
+        self.set_screen_on(False)
+        self._screen_bright = False
 
     def brighten_screen(self):
         Logger.info('BRIGHTEN SCREEN')
+        self.set_screen_on(True)
         self.set_screen_brightness(1)
-        self._screen_dimmed = False
+        self._screen_bright = True
 
-    def set_screen_brightness(self, brightness):
+    def set_screen_on(self, on):
+        raise NotImplementedError()
+
+    def set_screen_brightness(self, brightness, duration=None):
         raise NotImplementedError()
 
 def create_device(device_name):
