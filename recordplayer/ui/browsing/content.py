@@ -8,17 +8,17 @@ from kivy.uix.image import Image
 # 130, 4
 # 156, 5
 
-class AlbumIcon(ButtonBehavior, Image):
-    def __init__(self, album, **kwargs):
+class RecordIcon(ButtonBehavior, Image):
+    def __init__(self, record, **kwargs):
         super().__init__(
-            source=album.cover_image_path,
+            source=record.cover_image_path,
             size_hint=(None, None), 
             size=(156, 156), 
             allow_stretch=True,
             **kwargs
         )
-        self.album = album
-        album.icon_widget = self
+        self.record = record
+        record.icon_widget = self
         self.on_unselected()
 
     def on_selected(self):
@@ -34,12 +34,12 @@ class AlbumIcon(ButtonBehavior, Image):
         self.color = [1, 1, 1, 1]       
 
 
-class AlbumBrowser(ScrollView):
+class RecordBrowser(ScrollView):
     def __init__(self, listener, **kwargs):
         self._listener = listener 
         super().__init__(**kwargs)
 
-        ac = self.album_container = StackLayout(
+        ac = self.record_container = StackLayout(
             padding=0,
             spacing=5, 
             size_hint_y=None
@@ -49,45 +49,45 @@ class AlbumBrowser(ScrollView):
  
         self.add_widget(ac)
 
-    _albums = None
+    _records = None
     @property
-    def albums(self):
-        return self._albums
+    def records(self):
+        return self._records
 
-    @albums.setter
-    def albums(self, value):
-        self._albums = value
-        ac = self.album_container
+    @records.setter
+    def records(self, value):
+        self._records = value
+        ac = self.record_container
         ac.clear_widgets()
-        if self._albums:
-            for a in self._albums:
-                self.add_album(a)
+        if self._records:
+            for a in self._records:
+                self.add_record(a)
 
-    def add_album(self, album):
-        w = AlbumIcon(
-            album,
-            on_press=self.on_album_press
+    def add_record(self, record):
+        w = RecordIcon(
+            record,
+            on_press=self.on_record_press
         )
-        ac = self.album_container
+        ac = self.record_container
         ac.add_widget(w)
 
-    def on_album_press(self, widget):
-        album = widget.album
-        for a in self.albums:
-            if a is album:
+    def on_record_press(self, widget):
+        record = widget.record
+        for a in self.records:
+            if a is record:
                 a.icon_widget.brighten()
             else:
                 a.icon_widget.dim()
-        self.show_album(album)
-        self.album_label.text = album.name
-        self._listener.on_browse_album_press(album)
+        self.show_record(record)
+        self.record_label.text = record.name
+        self._listener.on_browse_record_press(record)
 
-    def show_album(self, album):
-        self.scroll_to(album.icon_widget, padding=25)
+    def show_record(self, record):
+        self.scroll_to(record.icon_widget, padding=25)
 
     def reset(self):
-        self.album_label.text = ''
-        for album in self.albums:
-            album.icon_widget.brighten()
+        self.record_label.text = ''
+        for record in self.records:
+            record.icon_widget.brighten()
         
 

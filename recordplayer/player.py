@@ -8,23 +8,23 @@ class Player:
     def playing(self):
         return self._playing
 
-    _playing_album = None
+    _playing_record = None
     @property
-    def playing_album(self):
-        return self._playing_album
+    def playing_record(self):
+        return self._playing_record
 
     _playing_track_name = None
     @property
     def playing_track_name(self):
         return self._playing_track_name
 
-    def play_album(self, album):
-        Logger.info('PLAY ' + album.name)
-        self._playing_album = album
+    def play_record(self, record):
+        Logger.info('PLAY ' + record.name)
+        self._playing_record = record
         self._playing = True
-        self.on_play_album()
+        self.on_play_record()
 
-    def on_play_album(self):
+    def on_play_record(self):
         raise NotImplementedError()
 
     def pause(self):
@@ -63,7 +63,7 @@ class Player:
         Logger.info('Player: STOP')
         self.on_stop()
         self._playing = False
-        self._playing_album = None
+        self._playing_record = None
 
     def on_stop(self):
         pass

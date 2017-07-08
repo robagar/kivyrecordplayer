@@ -3,24 +3,24 @@ import random
 from kivy.logger import Logger
 
 
-def load_albums(root_dir_path):
-    Logger.info('loading albums...')
-    albums = []
+def load_records(root_dir_path):
+    Logger.info('loading records...')
+    records = []
     for d in os.listdir(root_dir_path):
         if d[0] == '.':
             continue
 
         p = os.path.join(root_dir_path, d)
-        if is_valid_album_dir(p):
+        if is_valid_record_dir(p):
             # Logger.info(d)
-            albums.append(Album(p))
+            records.append(Record(p))
 
     random.seed(1)
-    random.shuffle(albums)
+    random.shuffle(records)
 
-    return albums
+    return records
 
-def is_valid_album_dir(dir_path):
+def is_valid_record_dir(dir_path):
     p = dir_path
     if not os.path.isdir(p):
         return False
@@ -28,7 +28,7 @@ def is_valid_album_dir(dir_path):
     return True
 
 
-class Album(object):
+class Record(object):
     MUSIC_EXTENSIONS = ['mp3', 'flac', 'ogg', 'wma']
     IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png']
     DEFAULT_COVER_IMAGE_PATH = None

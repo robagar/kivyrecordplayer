@@ -7,9 +7,9 @@ class MPDPlayer(Player):
         self._mpd = MPDClient()
         self._mpd.connect('localhost', 6600)
 
-    def on_play_album(self):
+    def on_play_record(self):
         self._mpd.clear()
-        self._mpd.add(self.playing_album.name)
+        self._mpd.add(self.playing_record.name)
         self._mpd.play()
 
     def on_pause(self):

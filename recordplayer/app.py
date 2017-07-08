@@ -7,7 +7,7 @@ from kivy.uix.label import Label
 from . import settings
 from .device import create_device
 from .player import create_player
-from .album import load_albums
+from .record import load_records
 from .shutdown import shutdown, reboot
 from .ui.browsing import create_browsing_ui
 from .ui.playing import create_playing_ui
@@ -18,13 +18,13 @@ class RecordPlayerApp(App):
          
     def build(self):
         ui = self.playing_ui = create_playing_ui(self)
-        self.album_carousel = ui.album_carousel
-        self.album_label = ui.header_bar.album_label
+        self.record_carousel = ui.record_carousel
+        self.record_label = ui.header_bar.record_label
         self.play_pause_button = ui.header_bar.play_pause_button
         self.playing_label = ui.play_bar.playing_label 
 
         ui = self.browsing_ui = create_browsing_ui(self)
-        self.album_browser = ui.album_browser
+        self.record_browser = ui.record_browser
  
         root = BoxLayout()
         root.add_widget(Label(
@@ -37,34 +37,34 @@ class RecordPlayerApp(App):
         Logger.info('START')
         self.device = create_device(settings.DEVICE)
         self.player = create_player(settings.PLAYER)
-        self.init_albums()
+        self.init_records()
         Clock.schedule_interval(lambda dt: self.update_player_status(), 1)
         self.show_browsing_ui()
         self.root_window.bind(on_touch_down=self.on_window_touch_down)
 
-    def init_albums(self):
-        self.albums \
-            = self.album_carousel.albums \
-            = self.album_browser.albums \
-            = load_albums(settings.MUSIC_PATH)
+    def init_records(self):
+        self.records \
+            = self.record_carousel.records \
+            = self.record_browser.records \
+            = load_records(settings.MUSIC_PATH)
 
-    _selected_album = None
+    _selected_record = None
     @property
-    def selected_album(self):
-        return self._selected_album
+    def selected_record(self):
+        return self._selected_record
 
-    @selected_album.setter
-    def selected_album(self, album):
-        if not album is self._selected_album:
-            Logger.info('SELECT ' + album.name if album else '(none)')
-            if self._selected_album:
-                self._selected_album.on_unselected()
-            self._selected_album = album
-            if album:
-                album.on_selected()
-                self.album_label.text = album.name
+    @selected_record.setter
+    def selected_record(self, record):
+        if not record is self._selected_record:
+            Logger.info('SELECT ' + record.name if record else '(none)')
+            if self._selected_record:
+                self._selected_record.on_unselected()
+            self._selected_record = record
+            if record:
+                record.on_selected()
+                self.record_label.text = record.name
             else:
-                self.album_label.text = ''
+                self.record_label.text = ''
             self.playing_label.text = ''
 
     def on_show_playing_ui_button_press(self,  widget):
@@ -73,25 +73,25 @@ class RecordPlayerApp(App):
     def on_show_browsing_ui_button_press(self,  widget):
         self.show_browsing_ui()
 
-    def show_playing_ui(self, album=None):
+    def show_playing_ui(self, record=None):
         self.show_ui(self.playing_ui)
-        if album:
-           self.selected_album = album 
-        if self.selected_album:
-            self.album_carousel.show_album(self.selected_album)
+        if record:
+           self.selected_record = record 
+        if self.selected_record:
+            self.record_carousel.show_record(self.selected_record)
 
     def show_browsing_ui(self):
         self.show_ui(self.browsing_ui)
-        self.album_browser.reset()
-        if self.selected_album:
-            self.album_browser.show_album(self.selected_album)
+        self.record_browser.reset()
+        if self.selected_record:
+            self.record_browser.show_record(self.selected_record)
 
-    def on_browse_album_press(self, album):
-        if not self.selected_album is album:
-            self.selected_album = album
+    def on_browse_record_press(self, record):
+        if not self.selected_record is record:
+            self.selected_record = record
         else:
             self.show_playing_ui()
-            self.player.play_album(album)
+            self.player.play_record(record)
         self.update_play_pause()
 
     def show_ui(self, ui):
@@ -99,47 +99,47 @@ class RecordPlayerApp(App):
         r.clear_widgets()
         r.add_widget(ui)
 
-    def on_album_press(self, album):
+    def on_record_press(self, record):
         p = self.player
-        if self.selected_album is album:
-            if not p.playing_album is album:
-                p.play_album(album)
+        if self.selected_record is record:
+            if not p.playing_record is record:
+                p.play_record(record)
             elif p.playing:
                 p.pause()
             else:
                 p.resume()
         else:           
-            self.selected_album = album
-            if p.playing_album and not p.playing_album is album:
+            self.selected_record = record
+            if p.playing_record and not p.playing_record is record:
                 p.stop()
         self.update_play_pause()
 
     def on_prev_button_press(self, widget):
-        album = self.selected_album
-        if album:
-            self.album_carousel.show_album(album)
+        record = self.selected_record
+        if record:
+            self.record_carousel.show_record(record)
             p = self.player
-            if p.playing_album is album:
+            if p.playing_record is record:
                 p.play_previous_track()
 
     def on_next_button_press(self, widget):
-        album = self.selected_album
-        if album:
-            self.album_carousel.show_album(album)
+        record = self.selected_record
+        if record:
+            self.record_carousel.show_record(record)
             p = self.player
-            if p.playing_album is album:
+            if p.playing_record is record:
                 p.play_next_track()
             else:
-                p.play_album(album)
+                p.play_record(record)
         self.update_play_pause()
 
     def on_play_pause_button_press(self, widget):
-        album = self.selected_album
-        if album:
-            self.album_carousel.show_album(album)
+        record = self.selected_record
+        if record:
+            self.record_carousel.show_record(record)
             p = self.player
-            if not p.playing_album is album:
-                p.play_album(album)
+            if not p.playing_record is record:
+                p.play_record(record)
             elif p.playing:
                 p.pause()
             else:
@@ -152,8 +152,8 @@ class RecordPlayerApp(App):
         p = self.player
         p.stop()
         p.rescan()
-        self.selected_album = None
-        self.init_albums()
+        self.selected_record = None
+        self.init_records()
 
     def on_shutdown_press(self, widget):
         if not settings.DEBUG:

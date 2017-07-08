@@ -20,10 +20,10 @@ class HeaderBar(BoxLayout):
         ))
  
         # currently playing
-        self.album_label = Label(
+        self.record_label = Label(
             text=""
         )
-        self.add_widget(self.album_label)
+        self.add_widget(self.record_label)
 
         # show playing UI
         self.show_playing_ui_button = BarButton(

@@ -4,17 +4,17 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
 
 
-class AlbumWidget(ButtonBehavior, Image):
-    def __init__(self, album, **kwargs):
+class RecordWidget(ButtonBehavior, Image):
+    def __init__(self, record, **kwargs):
         super().__init__(
-            source=album.cover_image_path,
+            source=record.cover_image_path,
             size_hint=(None, None), 
             size=(350, 350), 
             allow_stretch=True,
             **kwargs
         )
-        self.album = album
-        album.carousel_widget = self
+        self.record = record
+        record.carousel_widget = self
         self.on_unselected()
 
     def on_selected(self):
@@ -24,12 +24,12 @@ class AlbumWidget(ButtonBehavior, Image):
         self.color = [1, 1, 1, 0.5]       
 
 
-class AlbumCarousel(ScrollView):
+class RecordCarousel(ScrollView):
     def __init__(self, listener, **kwargs):
         super().__init__(**kwargs)
         self._listener = listener 
 
-        ac = self.album_container = BoxLayout(
+        ac = self.record_container = BoxLayout(
             orientation='horizontal',
             padding=15,
             spacing=30, 
@@ -41,39 +41,39 @@ class AlbumCarousel(ScrollView):
  
         self.add_widget(ac)
 
-    _albums = None
+    _records = None
     @property
-    def albums(self):
-        return self._albums
+    def records(self):
+        return self._records
 
-    @albums.setter
-    def albums(self, value):
-        self._albums = value
-        ac = self.album_container
+    @records.setter
+    def records(self, value):
+        self._records = value
+        ac = self.record_container
         ac.clear_widgets()
-        if self._albums:
-            for a in self._albums:
-                self.add_album(a)
+        if self._records:
+            for a in self._records:
+                self.add_record(a)
         self._update_content_width()
 
-    def add_album(self, album):
-        w = AlbumWidget(
-            album,
-            on_press=self.on_album_press
+    def add_record(self, record):
+        w = RecordWidget(
+            record,
+            on_press=self.on_record_press
         )
-        ac = self.album_container
+        ac = self.record_container
         ac.add_widget(w)
 
     def _update_content_width(self):
         # hack pending minimum_width in kivy 1.10
-        self.album_container.width = 30 + len(self.albums) * 380 
+        self.record_container.width = 30 + len(self.records) * 380 
 
-    def show_album(self, album):
-        self.scroll_to(album.carousel_widget, padding=225)
+    def show_record(self, record):
+        self.scroll_to(record.carousel_widget, padding=225)
 
-    def on_album_press(self, widget):
-        album = widget.album
-        self.show_album(album)
-        self._listener.on_album_press(album)
+    def on_record_press(self, widget):
+        record = widget.record
+        self.show_record(record)
+        self._listener.on_record_press(record)
 
 
