@@ -41,7 +41,8 @@ class Record(object):
         self._name = os.path.basename(self._dir_path)
 
         try:
-            ps = yaml.safe_load(os.path.join(self._dir_path, 'record.yaml'))
+            with open(os.path.join(self._dir_path, 'record.yaml'), 'r') as f:
+                ps = yaml.safe_load(f)
         except:
             ps = {}
             
