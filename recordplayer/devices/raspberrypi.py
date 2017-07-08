@@ -8,7 +8,7 @@ class RaspberryPiDevice(Device):
         super().__init__()
         self._max_brightness = bl.get_max_brightness()
 
-    def set_screen_brightness(self, brightness, duration):
+    def set_screen_brightness(self, brightness, duration=None):
         b = round(brightness * 255)
         if duration:
             bl.set_brightness(b, smooth=True, duration=duration)
