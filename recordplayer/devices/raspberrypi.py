@@ -4,7 +4,7 @@ from ..device import Device
 
 class RaspberryPiDevice(Device):
 
-    def __init__():
+    def __init__(self):
         super().__init__()
         self._max_brightness = bl.get_max_brightness()
 
