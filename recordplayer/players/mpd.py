@@ -9,7 +9,7 @@ class MPDPlayer(Player):
 
     def on_play_record(self):
         self._mpd.clear()
-        self._mpd.add(self.playing_record.name)
+        self._mpd.add(self.playing_record.url)
         self._mpd.play()
 
     def on_pause(self):

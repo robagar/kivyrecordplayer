@@ -1,5 +1,6 @@
 import os
 import random
+import yaml
 from kivy.logger import Logger
 
 
@@ -37,12 +38,25 @@ class Record(object):
         self._dir_path = dir_path
         self._widgets = set()
 
+        self._name = os.path.basename(self._dir_path)
+
+        try:
+            ps = yaml.safe_load(os.path.join(self._dir_path, 'record.yaml'))
+        except:
+            ps = {}
+            
+        self._url = ps.get('url', self._name)
+
         self._scan_files()
         # Logger.info(str(self._cover_image_file))
 
     @property
     def name(self):
-        return os.path.basename(self._dir_path)
+        return self._name
+
+    @property
+    def url(self):
+        return self._url
 
     @property
     def widgets(self):
