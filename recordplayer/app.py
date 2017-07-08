@@ -1,3 +1,5 @@
+from cProfile import Profile
+
 from kivy.app import App
 from kivy.logger import Logger
 from kivy.clock import Clock
@@ -35,6 +37,10 @@ class RecordPlayerApp(App):
 
     def on_start(self):
         Logger.info('START')
+        self.profile = Profile()
+        self.profile.enable()
+        Clock.schedule_once(self.end_profiling, 3*60)
+
         self.device = create_device(settings.DEVICE)
         self.player = create_player(settings.PLAYER)
         self.init_records()
@@ -188,3 +194,7 @@ class RecordPlayerApp(App):
     def on_window_touch_down(self, *args, **kwargs):
         # Logger.info('window touch')
         self.device.touch()
+
+    def end_profiling(self):
+        self.profile.disable()
+        self.profile.dump_stats('/tmp/recordplayer.profile')
