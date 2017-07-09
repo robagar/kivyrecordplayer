@@ -79,10 +79,9 @@ class RecordPlayerApp(App):
     def on_show_browsing_ui_button_press(self,  widget):
         self.show_browsing_ui()
 
-    def show_playing_ui(self, record=None):
+    def show_playing_ui(self):
+        self.selected_record = self.player.playing_record or self.selected_record
         self.show_ui(self.playing_ui)
-        if record:
-           self.selected_record = record 
         if self.selected_record:
             self.record_carousel.show_record(self.selected_record)
 
@@ -96,8 +95,8 @@ class RecordPlayerApp(App):
         if not self.selected_record is record:
             self.selected_record = record
         else:
-            self.show_playing_ui()
             self.player.play_record(record)
+            self.show_playing_ui()
         self.update_play_pause()
 
     def show_ui(self, ui):
