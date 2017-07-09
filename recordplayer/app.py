@@ -194,6 +194,7 @@ class RecordPlayerApp(App):
         # Logger.info('window touch')
         self.device.touch()
 
-    def end_profiling(self):
+    def end_profiling(self, dt):
+        Logger.info('saving profile data after running for {0} seconds'.format(dt))
         self.profile.disable()
         self.profile.dump_stats('/tmp/recordplayer.profile')
