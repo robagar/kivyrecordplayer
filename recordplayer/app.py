@@ -90,14 +90,18 @@ class RecordPlayerApp(App):
         self.record_browser.reset()
         if self.selected_record:
             self.record_browser.show_record(self.selected_record)
+            self.selected_record = None
 
     def on_browse_record_press(self, record):
-        if not self.selected_record is record:
-            self.selected_record = record
-        else:
+        if self.selected_record is record:
             self.player.play_record(record)
             self.show_playing_ui()
+        elif not self.selected_record:
+            self.selected_record = record
+        else:
+            self.selected_record = None
         self.update_play_pause()
+        return self.selected_record
 
     def show_ui(self, ui):
         r = self.root

@@ -72,15 +72,20 @@ class RecordBrowser(ScrollView):
         ac.add_widget(w)
 
     def on_record_press(self, widget):
-        record = widget.record
+        record = self._listener.on_browse_record_press(widget.record)
+        if record:
+            self.highlight_record(record)
+            self.record_label.text = record.name
+        else:
+            self.reset()
+
+    def highlight_record(self, record):
         for a in self.records:
             if a is record:
                 a.icon_widget.brighten()
             else:
                 a.icon_widget.dim()
         self.show_record(record)
-        self.record_label.text = record.name
-        self._listener.on_browse_record_press(record)
 
     def show_record(self, record):
         self.scroll_to(record.icon_widget, padding=25)
