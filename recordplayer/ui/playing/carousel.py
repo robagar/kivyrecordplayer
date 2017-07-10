@@ -31,7 +31,7 @@ class RecordCarousel(ScrollView):
 
         ac = self.record_container = BoxLayout(
             orientation='horizontal',
-            padding=15,
+            padding=[225,15],
             spacing=30, 
             size_hint_x=None
         )
@@ -66,7 +66,7 @@ class RecordCarousel(ScrollView):
 
     def _update_content_width(self):
         # hack pending minimum_width in kivy 1.10
-        self.record_container.width = 30 + len(self.records) * 380 
+        self.record_container.width = 450 + len(self.records) * 380 
 
     def show_record(self, record):
         self.scroll_to(record.carousel_widget, padding=225)
