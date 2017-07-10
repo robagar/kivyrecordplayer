@@ -6,7 +6,8 @@ from kivy.logger import Logger
 
 def load_records(root_dir_path):
     Logger.info('loading records...')
-    records = []
+    sticky_records = []
+    nonsticky_records = []
     for d in os.listdir(root_dir_path):
         if d[0] == '.':
             continue
@@ -14,12 +15,18 @@ def load_records(root_dir_path):
         p = os.path.join(root_dir_path, d)
         if is_valid_record_dir(p):
             # Logger.info(d)
-            records.append(Record(p))
+            r = Record(p)
+            l = sticky_records if r.sticky else nonsticky_records 
+            l.append(r)
 
+    # sticky records sorted by name
+    sticky_records.sort(key=lambda r: r.name)
+
+    # rest random (but consistent)
     random.seed(1)
-    random.shuffle(records)
+    random.shuffle(nonsticky_records)
 
-    return records
+    return sticky_records + nonsticky_records
 
 def is_valid_record_dir(dir_path):
     p = dir_path
@@ -47,6 +54,7 @@ class Record(object):
             ps = {}
             
         self._url = ps.get('url', self._name)
+        self._sticky = bool(ps.get('sticky', False))
 
         self._scan_files()
         # Logger.info(str(self._cover_image_file))
@@ -58,6 +66,10 @@ class Record(object):
     @property
     def url(self):
         return self._url
+
+    @property
+    def sticky(self):
+        return self._sticky
 
     @property
     def widgets(self):
