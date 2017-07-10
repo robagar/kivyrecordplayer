@@ -5,6 +5,7 @@ from kivy.logger import Logger
 from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
+from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 
 from . import settings
 from .device import create_device
@@ -17,23 +18,29 @@ from .ui.system import create_system_popup
 
 
 class RecordPlayerApp(App):
+
+    PLAYING = 'playing'
+    BROWSING = 'browsing'
          
     def build(self):
         ui = self.playing_ui = create_playing_ui(self)
+        s = self.playing_screen = Screen(name=self.PLAYING)
+        s.add_widget(ui)
         self.record_carousel = ui.record_carousel
         self.record_label = ui.header_bar.record_label
         self.play_pause_button = ui.header_bar.play_pause_button
         self.playing_label = ui.play_bar.playing_label 
 
         ui = self.browsing_ui = create_browsing_ui(self)
+        s = self.browsing_screen = Screen(name=self.BROWSING)
+        s.add_widget(ui)
         self.record_browser = ui.record_browser
  
-        root = BoxLayout()
-        root.add_widget(Label(
-            text='loading...'
-        ))
+        sm = self.screen_manager = ScreenManager(transition=FadeTransition())
+        sm.add_widget(self.browsing_screen)
+        sm.add_widget(self.playing_screen)
 
-        return root
+        return sm
 
     def on_start(self):
         Logger.info('START')
@@ -81,12 +88,12 @@ class RecordPlayerApp(App):
 
     def show_playing_ui(self):
         self.selected_record = self.player.playing_record or self.selected_record
-        self.show_ui(self.playing_ui)
+        self.screen_manager.current = self.PLAYING
         if self.selected_record:
             self.record_carousel.show_record(self.selected_record)
 
     def show_browsing_ui(self):
-        self.show_ui(self.browsing_ui)
+        self.screen_manager.current = self.BROWSING
         self.record_browser.reset()
         if self.selected_record:
             self.record_browser.show_record(self.selected_record)
@@ -102,11 +109,6 @@ class RecordPlayerApp(App):
             self.selected_record = None
         self.update_play_pause()
         return self.selected_record
-
-    def show_ui(self, ui):
-        r = self.root
-        r.clear_widgets()
-        r.add_widget(ui)
 
     def on_record_press(self, record):
         p = self.player
