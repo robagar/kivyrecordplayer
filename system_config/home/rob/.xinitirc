@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd /home/rob/repos/kivyrecordplayer
+python -m recordplayer
+
