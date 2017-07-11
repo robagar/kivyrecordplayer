@@ -5,7 +5,7 @@ from kivy.logger import Logger
 from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
+from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 
 from . import settings
 from .device import create_device
@@ -36,7 +36,7 @@ class RecordPlayerApp(App):
         s.add_widget(ui)
         self.record_browser = ui.record_browser
  
-        sm = self.screen_manager = ScreenManager(transition=FadeTransition())
+        sm = self.screen_manager = ScreenManager(transition=NoTransition())
         sm.add_widget(self.browsing_screen)
         sm.add_widget(self.playing_screen)
 
