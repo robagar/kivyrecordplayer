@@ -166,6 +166,10 @@ class RecordPlayerApp(App):
         self.selected_record = None
         self.init_records()
 
+    def on_sleep_press(self, widget):
+        Logger.info('SLEEP')
+        self.device.screen_off()
+
     def on_shutdown_press(self, widget):
         if not settings.DEBUG:
             Logger.info('RecordPlayer: SHUTDOWN')
