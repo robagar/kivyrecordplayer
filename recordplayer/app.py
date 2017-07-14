@@ -168,7 +168,10 @@ class RecordPlayerApp(App):
 
     def on_sleep_press(self, widget):
         Logger.info('SLEEP')
+        self._system_popup.dismiss()
         self.device.screen_off()
+        self.player.stop()
+        self.selected_record = None
 
     def on_shutdown_press(self, widget):
         if not settings.DEBUG:
