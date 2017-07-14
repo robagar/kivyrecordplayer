@@ -13,7 +13,7 @@ def create_system_popup(listener):
     c.add_widget(Button(
         markup=True,
         text=icon('fa-moon-o') + ' sleep',
-        on_press=listener.on_rescan_press
+        on_press=listener.on_sleep_press
     ))
     c.add_widget(Button(
         markup=True,
