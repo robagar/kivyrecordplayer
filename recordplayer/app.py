@@ -135,8 +135,8 @@ class RecordPlayerApp(BackendListener, App):
                 b.resume()
         else:           
             self.selected_record = record
-            if p.playing_record and not p.playing_record is record:
-                p.stop()
+            if b.playing_record and not b.playing_record is record:
+                b.stop()
         self.update_play_pause()
 
     def on_prev_button_press(self, widget):
@@ -163,7 +163,7 @@ class RecordPlayerApp(BackendListener, App):
         if record:
             self.record_carousel.show_record(record)
             b = self.backend
-            if not p.playing_record is record:
+            if not b.playing_record is record:
                 b.play_record(record)
             elif b.playing:
                 b.pause()
