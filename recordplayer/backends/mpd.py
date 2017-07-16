@@ -37,9 +37,9 @@ class MPDBackend(Backend):
         m.clear()
 
     _mpd_states = {
-        'play': self.PLAYING,
-        'pause': self.PAUSED,
-        'stop': self.STOPPED
+        'play': Backend.PLAYING,
+        'pause': Backend.PAUSED,
+        'stop': Backend.STOPPED
     } 
 
     def update(self):
