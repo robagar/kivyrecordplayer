@@ -36,12 +36,18 @@ class MPDBackend(Backend):
         m.pause()
         m.clear()
 
+    _mpd_states = {
+        'play': self.PLAYING,
+        'pause': self.PAUSED,
+        'stop': self.STOPPED
+    } 
+
     def update(self):
         t = self._mpd.currentsong()
         self.playing_track_name = t.get('title') if t else None
 
-        s = self._mpd.status()
-        self.status = s.get('status')
+        status = self._mpd.status()
+        self.state = self._mpd_state.get(status.get('state'))
 
     def rescan(self):
         self._mpd.update()
