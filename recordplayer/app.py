@@ -66,6 +66,8 @@ class RecordPlayerApp(BackendListener, App):
         # load records after displaying "loading..." 
         self.screen_manager.current = self.INITIALIZING
         Clock.schedule_once(lambda dt: Clock.schedule_once(lambda dt: self.init_records(), 0), 0)
+        
+        self.device.brighten_screen()
 
     def init_records(self):
         Logger.info('initializing records...')
