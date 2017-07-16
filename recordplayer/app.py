@@ -202,7 +202,7 @@ class RecordPlayerApp(BackendListener, App):
             Logger.info('RecordPlayer: REBOOT (not really - DEBUG is true)')
 
     def on_backend_state_change(self, old_state, new_state):
-        Logger.info('{0}: {1} -> {2}'.format(self.backend_name, old_state, new_state))
+        Logger.info('{0}: {1} -> {2}'.format(self.backend.name, old_state, new_state))
         if self.backend.stopped:
             self.device.dim_screen()
 
