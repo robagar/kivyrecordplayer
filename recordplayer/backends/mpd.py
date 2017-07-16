@@ -47,7 +47,7 @@ class MPDBackend(Backend):
         self.playing_track_name = t.get('title') if t else None
 
         status = self._mpd.status()
-        self.state = self._mpd_state.get(status.get('state'))
+        self.state = self._mpd_states.get(status.get('state'))
 
     def rescan(self):
         self._mpd.update()
