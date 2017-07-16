@@ -174,8 +174,11 @@ class RecordPlayerApp(BackendListener, App):
         self.update_play_pause()
 
     def on_rescan_press(self, widget):
-        Logger.info('RESCAN')
         self._system_popup.dismiss()
+        Clock.schedule_once(lambda dt: self.rescan(), 0)
+
+    def rescan(self):
+        Logger.info('RESCAN')
         b = self.backend
         b.stop()
         b.rescan()
