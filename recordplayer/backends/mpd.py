@@ -1,9 +1,10 @@
 from mpd import MPDClient
-from ..player import Player
+from ..backend import Backend
 
 
-class MPDPlayer(Player):
-    def __init__(self):
+class MPDBackend(Backend):
+    def __init__(self, listener):
+        super().__init__('mpd', listener)
         self._mpd = MPDClient()
         self._mpd.connect('localhost', 6600)
 
@@ -37,7 +38,10 @@ class MPDPlayer(Player):
 
     def update(self):
         t = self._mpd.currentsong()
-        self._playing_track_name = t.get('title') if t else None
+        self.playing_track_name = t.get('title') if t else None
+
+        s = self._mpd.status()
+        self.status = s.get('status')
 
     def rescan(self):
         self._mpd.update()

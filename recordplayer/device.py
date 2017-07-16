@@ -5,14 +5,14 @@ from . import settings
 
 class Device:
     def __init__(self):
-        self._schedule_dim_screen = Clock.schedule_once(lambda dt: self.dim_screen(), settings.SCREEN_DIM_TIME)
+        # self._schedule_dim_screen = Clock.schedule_once(lambda dt: self.dim_screen(), settings.SCREEN_DIM_TIME)
         self._schedule_off_screen = Clock.schedule_once(lambda dt: self.screen_off(), settings.SCREEN_OFF_TIME)
 
     _screen_bright = False
 
     def touch(self):
-        self._schedule_dim_screen.cancel()
-        self._schedule_dim_screen()
+        # self._schedule_dim_screen.cancel()
+        # self._schedule_dim_screen()
 
         self._schedule_off_screen.cancel()
         self._schedule_off_screen()
