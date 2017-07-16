@@ -207,7 +207,7 @@ class RecordPlayerApp(BackendListener, App):
             self.device.dim_screen()
 
     def on_backend_playing_track(self, playing_track_name):
-        Logger.info('{0}: playing track {1}', self.backend.name, playing_track_name)    
+        Logger.info('{0}: playing track {1}'.format(self.backend.name, playing_track_name))    
         ptn = playing_track_name
         self.playing_label.text = ptn if ptn else ''
 
