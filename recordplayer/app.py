@@ -65,7 +65,7 @@ class RecordPlayerApp(BackendListener, App):
 
         # load records after displaying "loading..." 
         self.screen_manager.current = self.INITIALIZING
-        Clock.schedule_once(lambda dt: Clock.schedule_once(lambda dt: self.init_records(), 0), 0)
+        Clock.schedule_once(lambda dt: self.init_records(), 0.5)
         
         self.device.brighten_screen()
 
@@ -85,11 +85,11 @@ class RecordPlayerApp(BackendListener, App):
     @selected_record.setter
     def selected_record(self, record):
         if not record is self._selected_record:
-            Logger.info('SELECT ' + record.name if record else '(none)')
             if self._selected_record:
                 self._selected_record.on_unselected()
             self._selected_record = record
             if record:
+                Logger.info('SELECT ' + record.name)
                 record.on_selected()
                 self.record_label.text = record.name
             else:
@@ -175,7 +175,7 @@ class RecordPlayerApp(BackendListener, App):
 
     def on_rescan_press(self, widget):
         self._system_popup.dismiss()
-        Clock.schedule_once(lambda dt: self.rescan(), 0)
+        Clock.schedule_once(lambda dt: self.rescan(), 0.25)
 
     def rescan(self):
         Logger.info('RESCAN')
@@ -208,6 +208,7 @@ class RecordPlayerApp(BackendListener, App):
 
     def on_backend_state_change(self, old_state, new_state):
         Logger.info('{0}: {1} -> {2}'.format(self.backend.name, old_state, new_state))
+        self.update_play_pause()
         if self.backend.stopped:
             self.device.dim_screen()
 
@@ -223,8 +224,7 @@ class RecordPlayerApp(BackendListener, App):
         self._system_popup.open()
 
     def update_play_pause(self):
-        b = self.play_pause_button
-        b.set_icon('pause' if self.backend.playing else 'play')
+        self.play_pause_button.set_icon('pause' if self.backend.playing else 'play')
 
     def on_window_touch_down(self, *args, **kwargs):
         # Logger.info('window touch')
