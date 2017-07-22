@@ -8,3 +8,5 @@
 The actual playback is handled by a configurable backend, by default the excellent [Music Player Daemon](https://www.musicpd.org/).
 
 Built using [Kivy](https://kivy.org).
+
+![browsing](https://bytebucket.org/robagar/kivyrecordplayer/raw/164f3ec95368ce9f25a44022c644bb4b20c791fb/screenshots/browsing.png)
