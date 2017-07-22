@@ -10,3 +10,5 @@ The actual playback is handled by a configurable backend, by default the excelle
 Built using [Kivy](https://kivy.org).
 
 ![browsing](https://bytebucket.org/robagar/kivyrecordplayer/raw/164f3ec95368ce9f25a44022c644bb4b20c791fb/screenshots/browsing.png)
+
+![playing](https://bytebucket.org/robagar/kivyrecordplayer/raw/be94eb54d1e853946151b1932adade498eb8ce78/screenshots/playing.png)
