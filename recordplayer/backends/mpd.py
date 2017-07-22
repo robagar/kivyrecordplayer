@@ -9,7 +9,7 @@ class MPDBackend(Backend):
         self._mpd.connect('localhost', 6600)
 
     def on_play_record(self):
-        self._mpd.clear()
+        self._reset()
         self._mpd.add(self.playing_record.url)
         self._mpd.play()
 
@@ -21,15 +21,11 @@ class MPDBackend(Backend):
 
     def on_play_next_track(self):
         m = self._mpd
-        m.repeat(1)
         m.next()
-        m.repeat(0)
 
     def on_play_previous_track(self):
         m = self._mpd
-        m.repeat(1)
         m.previous()
-        m.repeat(0)
 
     def on_stop(self):
         m = self._mpd
@@ -52,6 +48,12 @@ class MPDBackend(Backend):
     def rescan(self):
         self._mpd.update()
 
-
+    def _reset(self):
+        m = self._mpd
+        m.clear()
+        m.repeat(0)
+        m.random(0)
+        m.single(0)
+        m.consume(0)
 
 
