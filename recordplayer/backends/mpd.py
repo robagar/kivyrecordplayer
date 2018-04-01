@@ -21,11 +21,17 @@ class MPDBackend(Backend):
 
     def on_play_next_track(self):
         m = self._mpd
-        m.next()
+        try:
+            m.next()
+        except:
+            pass
 
     def on_play_previous_track(self):
         m = self._mpd
-        m.previous()
+        try:
+            m.previous()
+        except:
+            pass
 
     def on_stop(self):
         m = self._mpd
